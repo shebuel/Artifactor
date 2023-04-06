@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Artifactor (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "Artifactor (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
