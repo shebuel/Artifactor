@@ -26,6 +26,11 @@ using Newtonsoft.Json;
 using Windows.UI.ViewManagement;
 using System.Security.Cryptography.X509Certificates;
 using System.Collections.ObjectModel;
+using Windows.ApplicationModel.DataTransfer;
+using System.Drawing;
+using Windows.Storage.Streams;
+using Microsoft.UI.Xaml.Media.Imaging;
+using Windows.Graphics.Imaging;
 
 
 // To learn more about WinUI, the WinUI project structure,
@@ -43,21 +48,23 @@ namespace Artifactor
             this.InitializeComponent();
 
             //Set the tilte bar
-            Title = "Artifactor Tool";
+            /*Title = "Artifactor Tool";
             ExtendsContentIntoTitleBar = true;
-            SetTitleBar(TitleBar);
+            SetTitleBar(TitleBar);*/
 
             //Change the default launch size of the window
-            ApplicationView.PreferredLaunchViewSize = new Size(500, 500);
+            ApplicationView.PreferredLaunchViewSize = new Windows.Foundation.Size(500, 500);
             ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
             //checkList.Add(checks[5].testName);
+            
 
         }
 
         public string OutputFolder = "";
         public string json = "";
         public List<Checks> checks = new List<Checks>();
-        public ObservableCollection<String> checkList = new ObservableCollection<string>();
+        public ObservableCollection<Checks> checksSanitized = new ObservableCollection<Checks>();
+        //public ObservableCollection<String> checkList = new ObservableCollection<string>();
 
         private void excelToJson(object sender, RoutedEventArgs e)
         {
@@ -92,6 +99,14 @@ namespace Artifactor
                             }
                         }
                     } while (reader.NextResult());
+
+                    for (int i = 0; i < checks.Count; i++)
+                    {
+                        if (checks[i].testName != null)
+                        {
+                            checksSanitized.Add(checks[i]);
+                        }
+                    }
 
 
                     // 2. Use the AsDataSet extension method
@@ -160,12 +175,68 @@ namespace Artifactor
                 for (int i = 0; i < checks.Count(); i++)
                 {
                     if (checks[i].testName != null) {
-                        checkList.Add(checks[i].testName);
+                        checksSanitized.Add(checks[i]);
                     }
                     
                 }
             }
 
+        }
+
+        private async void Paste_Click(object sender, RoutedEventArgs e)
+        {
+            
+            Checks checkPaste = (sender as FrameworkElement).DataContext as Checks;
+            if (checkPaste.testID == null)
+                consoleLog.Text = "Invalid Index";
+            else
+                consoleLog.Text = checkPaste.testID.ToString();
+
+            var dataPackageView = Clipboard.GetContent();
+            if (dataPackageView != null && dataPackageView.Contains("Bitmap"))
+            {
+                IRandomAccessStreamReference imageReceived = null;
+                imageReceived = await dataPackageView.GetBitmapAsync();
+                if (imageReceived != null)
+                {
+                    using (var imageStream = await imageReceived.OpenReadAsync())
+                    {
+                        /*WriteableBitmap bitmapImage = new WriteableBitmap(500, 500);
+                        await bitmapImage.SetSourceAsync(imageStream);
+
+                        StorageFile outputFile = new StorageFile.GetFileFromPathAsync("C:\\Users\\jsheb\\Downloads");
+
+
+                        FileStream imageFileStream = File.OpenWrite(OutputFolder + "\\" + checks[0].testID + "_001");
+                        BitmapEncoder encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, imageFileStream);*/
+
+                        var fileSave = new FileSavePicker();
+                        fileSave.FileTypeChoices.Add("Image", new string[] { ".png" });
+                        fileSave.DefaultFileExtension = ".png";
+                        fileSave.SuggestedFileName = checkPaste.testID + "_001";
+                        fileSave.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
+
+                        // Retrieve the window handle (HWND) of the current WinUI 3 window. 
+                        var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
+
+                        // Initialize the folder picker with the window handle (HWND).
+                        WinRT.Interop.InitializeWithWindow.Initialize(fileSave, hWnd);
+
+                        var storageFile = await fileSave.PickSaveFileAsync();
+
+                        checksSanitized.GetEnumerator().MoveNext();
+                        //TODO: Create a null exception
+
+                        using (var stream = await storageFile.OpenAsync(FileAccessMode.ReadWrite))
+                        {
+                            await imageStream.AsStreamForRead().CopyToAsync(stream.AsStreamForWrite());
+                        }
+
+                    }
+                }
+            }
+
+            else { Paste_Click(sender, e);}
         }
     }
 }

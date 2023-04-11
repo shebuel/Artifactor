@@ -1,6 +1,7 @@
 ﻿using ExcelDataReader;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,9 @@ namespace Artifactor
         public string testName { get; set; }
         public string testDescription { get; set; }
         public string testType { get; set; }
+        public bool checkCompleted { get; set; }
+        public List<string> filePath { get; set; }
+    
     }
 
 }
