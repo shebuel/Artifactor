@@ -5,23 +5,12 @@
     x:Class="Artifactor.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Artifactor"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:l="using:System"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:l="using:System" xmlns:l1="using:Artifactor"
     mc:Ignorable="d">
 
     <ListView>
 
-        <!--#region Title Bar-->
-        <Grid RowDefinitions="35,*">
-            <StackPanel x:Name="TitleBar" Grid.Row="0" Grid.Column="1" VerticalAlignment="Top" Background="{ThemeResource AppBarItemBackgroundThemeBrush}" Orientation="Horizontal">
-                <Image Source="Assets/scroll-icon-29278.png"></Image>
-                <TextBlock Margin="0,0,8,0" VerticalAlignment="Center" Text="{x:Bind Title}"></TextBlock>
-            </StackPanel>
-        </Grid>
-        <!--#endregion-->
-
-        
         <!--#region Tool Image-->
         <Image Source="Assets/scroll-icon-29278.png" Height="300" Width="300" HorizontalAlignment="Center" Margin="0,200,0,0" />
 
@@ -49,33 +38,50 @@
         <!--Start Button-->
         <Button x:Name="startButton" Click="startButton_Click" VerticalAlignment="Bottom" Margin="0,20,0,0" HorizontalAlignment="Center">Start!</Button>
 
-
-
         
+
+
         <!--Item Reapeater-->
 
         <ScrollViewer HorizontalScrollBarVisibility="Auto"
               HorizontalScrollMode="Auto"
               IsVerticalScrollChainingEnabled="False"
               MaxHeight="500" MinHeight="500">
+            
+            
             <ItemsRepeater
-               ItemsSource="{x:Bind checkList}">
-                <DataTemplate x:DataType="l:String">
-                    <Grid Background="{StaticResource SystemControlBackgroundAccentBrush}" Margin="10, 0, 10 10" Width="1500">
-                        <TextBlock Padding="10" Text="{x:Bind}" Style="{StaticResource BodyTextBlockStyle}"
-                   Foreground="{StaticResource SystemControlForegroundAltHighBrush}"
-                   HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="0" Grid.Row="0"/>
-                        <RadioButtons x:Name="BackgroundRadioButtons" SelectedIndex="0"  MaxColumns="3" Header="Test Status" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Center">
+               ItemsSource="{x:Bind checksSanitized}"
+                Layout="{x:Bind uniformGridLayout }"
+                x:Name="checkItemRepeater">
+
+                <DataTemplate x:DataType="l1:Checks">
+                    <Grid Background="{StaticResource CardBackgroundFillColorSecondaryBrush}" Margin="10, 0, 10 10" HorizontalAlignment="Stretch">
+
+                        <TextBlock Padding="10" Text="{x:Bind testName}" Style="{StaticResource BodyTextBlockStyle}"
+                                Foreground="{StaticResource TextFillColorPrimaryBrush}"
+                                HorizontalAlignment="Left" TextWrapping="Wrap" 
+                                VerticalAlignment="Center"/>
+
+                        <RadioButtons x:Name="BackgroundRadioButtons" SelectedIndex="0"  MaxColumns="3" Header="Test Status" HorizontalAlignment="Center">
                             <x:String>Pass</x:String>
                             <x:String>Fail</x:String>
                             <x:String>Not Applicable</x:String>
                         </RadioButtons>
-                        <TextBox MinWidth="500" Grid.Column="2" Grid.Row="0" PlaceholderText="Enter Comments here" HorizontalAlignment="Right"></TextBox>
+
+                        <TextBox MinWidth="500" PlaceholderText="Enter Comments here" HorizontalAlignment="Right"></TextBox>
+
+                        <Button Background="{StaticResource SystemControlBackgroundAccentBrush}" HorizontalAlignment="Right" Click="Paste_Click" DataContext="{x:Bind}">Paste</Button>
+
                     </Grid>
                 </DataTemplate>
+                
             </ItemsRepeater>
         </ScrollViewer>
+        
+        
+        <!-- The Layout specifications used: -->
+        <UniformGridLayout x:Name="uniformGridLayout" Orientation="Vertical" MinColumnSpacing="8" MinRowSpacing="2" ItemsStretch="Fill" MinItemWidth="2000"/>
 
-        <StackLayout x:Name="VerticalStackLayout" Orientation="Vertical" Spacing="8"/>
+        <TextBlock x:Name="consoleLog">Test</TextBlock>
     </ListView>
 </Window>
