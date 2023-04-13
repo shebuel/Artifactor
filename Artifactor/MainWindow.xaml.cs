@@ -31,6 +31,7 @@ using System.Drawing;
 using Windows.Storage.Streams;
 using Microsoft.UI.Xaml.Media.Imaging;
 using Windows.Graphics.Imaging;
+using System.Reflection.Metadata.Ecma335;
 
 
 // To learn more about WinUI, the WinUI project structure,
@@ -64,6 +65,7 @@ namespace Artifactor
         public string json = "";
         public List<Checks> checks = new List<Checks>();
         public ObservableCollection<Checks> checksSanitized = new ObservableCollection<Checks>();
+        public int indexOfCheck = 0;
         //public ObservableCollection<String> checkList = new ObservableCollection<string>();
 
         private void excelToJson(object sender, RoutedEventArgs e)
@@ -187,10 +189,11 @@ namespace Artifactor
         {
             
             Checks checkPaste = (sender as FrameworkElement).DataContext as Checks;
-            if (checkPaste.testID == null)
-                consoleLog.Text = "Invalid Index";
-            else
-                consoleLog.Text = checkPaste.testID.ToString();
+            
+            if (checkPaste != null)
+            {
+                indexOfCheck = checksSanitized.IndexOf(checkPaste); 
+            }
 
             var dataPackageView = Clipboard.GetContent();
             if (dataPackageView != null && dataPackageView.Contains("Bitmap"))
@@ -210,10 +213,19 @@ namespace Artifactor
                         FileStream imageFileStream = File.OpenWrite(OutputFolder + "\\" + checks[0].testID + "_001");
                         BitmapEncoder encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, imageFileStream);*/
 
+                        int fileCount = 1;
+
+
+                        if (checksSanitized[indexOfCheck].filePath != null)
+                            fileCount = checksSanitized[indexOfCheck].filePath.Count + 1;
+
+
+
+
                         var fileSave = new FileSavePicker();
                         fileSave.FileTypeChoices.Add("Image", new string[] { ".png" });
                         fileSave.DefaultFileExtension = ".png";
-                        fileSave.SuggestedFileName = checkPaste.testID + "_001";
+                        fileSave.SuggestedFileName = checksSanitized[indexOfCheck].testID + "_" + fileCount.ToString();
                         fileSave.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
 
                         // Retrieve the window handle (HWND) of the current WinUI 3 window. 
@@ -223,6 +235,10 @@ namespace Artifactor
                         WinRT.Interop.InitializeWithWindow.Initialize(fileSave, hWnd);
 
                         var storageFile = await fileSave.PickSaveFileAsync();
+
+                        checksSanitized[indexOfCheck].filePath.Add(storageFile.Path);
+
+                        consoleLog.Text = checksSanitized[indexOfCheck].filePath[0];
 
                         checksSanitized.GetEnumerator().MoveNext();
                         //TODO: Create a null exception
