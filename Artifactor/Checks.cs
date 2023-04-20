@@ -14,6 +14,15 @@ namespace Artifactor
         public string testName { get; set; }
         public string testDescription { get; set; }
         public string testType { get; set; }
+        public bool checkCompleted { get; set; }
+        public List<string> filePath { get; set; }
+
+        public Checks()
+        {
+            filePath = new List<string>();
+            checkCompleted = false;
+        }
+    
     }
 
 }

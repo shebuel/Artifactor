@@ -12,6 +12,8 @@
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
                 <!-- Other merged dictionaries here -->
             </ResourceDictionary.MergedDictionaries>
+            <SolidColorBrush x:Name="checkUncheckedBrush" Color="{ThemeResource ControlStrongStrokeColorDefaultBrush}"/>
+            <SolidColorBrush x:Name="checkCheckedBrush" Color="{ThemeResource SystemFillColorSuccessBackgroundBrush}"/>
             <!-- Other app resources here -->
         </ResourceDictionary>
     </Application.Resources>

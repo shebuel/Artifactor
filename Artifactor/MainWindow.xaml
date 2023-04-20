@@ -9,36 +9,53 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:l="using:System"
     mc:Ignorable="d">
+    
+    
 
-    <ListView>
+    <ListView Background="{StaticResource SolidBackgroundFillColorBaseBrush}">
 
-        <!--#region Title Bar-->
-        <Grid RowDefinitions="35,*">
-            <StackPanel x:Name="TitleBar" Grid.Row="0" Grid.Column="1" VerticalAlignment="Top" Background="{ThemeResource AppBarItemBackgroundThemeBrush}" Orientation="Horizontal">
-                <Image Source="Assets/scroll-icon-29278.png"></Image>
-                <TextBlock Margin="0,0,8,0" VerticalAlignment="Center" Text="{x:Bind Title}"></TextBlock>
-            </StackPanel>
-        </Grid>
-        <!--#endregion-->
+        <NavigationView x:Name="nvSample">
+            <NavigationView.MenuItems>
+                <NavigationViewItem Icon="Play" Content="Menu Item1" Tag="SamplePage1" />
+                <NavigationViewItem Icon="Save" Content="Menu Item2" Tag="SamplePage2" />
+                <NavigationViewItem Icon="Refresh" Content="Menu Item3" Tag="SamplePage3" />
+                <NavigationViewItem Icon="Download" Content="Menu Item4" Tag="SamplePage4" />
+            </NavigationView.MenuItems>
+            <Frame x:Name="contentFrame"/>
+        </NavigationView>
 
-        
         <!--#region Tool Image-->
         <Image Source="Assets/scroll-icon-29278.png" Height="300" Width="300" HorizontalAlignment="Center" Margin="0,200,0,0" />
 
 
 
         <!--#region Input boxes-->
-        <Grid Width="1000" Height="Auto" Background="{ThemeResource AppBarBackgroundThemeBrush}" ColumnDefinitions="200, Auto, *" RowDefinitions ="Auto, Auto, *">
-            
-            <TextBlock Text="Folder Path" Style="{StaticResource BodyTextBlockStyle}" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center"/>
+        <Grid Width="1000" Height="Auto" Background="{ThemeResource LayerFillColorDefaultBrush}" ColumnDefinitions="200, Auto, *" RowDefinitions ="Auto, Auto, Auto, Auto">
 
-            <TextBox x:Name="PickFolderOutputTextBlock" TextWrapping="Wrap" Padding="20,5,0,0" Grid.Column="1" Grid.Row="0" MinWidth="500"/>
-            <Button x:Name="PickFolderButton" Content="Open a folder" Click="PickFolderButton_Click" Margin="20,0,0,10" Grid.Column="2" Grid.Row="0" HorizontalAlignment="Stretch" Background="{StaticResource SystemControlBackgroundAccentBrush}"/>
+            <TextBlock Text="Tester Name" Style="{StaticResource BodyTextBlockStyle}" Grid.Column="0" Grid.Row="0" VerticalAlignment="Center"/>
+            <TextBox x:Name="TesterNameTextBlock" TextWrapping="Wrap" Padding="20,5,0,0" Grid.Column="1" Grid.Row="0" MinWidth="500"/>
+
+            <TextBlock Text="Application Name" Style="{StaticResource BodyTextBlockStyle}" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center"/>
+            <TextBox x:Name="AppNameTextBlock" TextWrapping="Wrap" Padding="20,5,0,0" Grid.Column="1" Grid.Row="1" MinWidth="500"/>
+
+
+            <TextBlock Text="Folder Path" Style="{StaticResource BodyTextBlockStyle}" Grid.Column="0" Grid.Row="2" VerticalAlignment="Center"/>
+            <TextBox x:Name="PickFolderOutputTextBlock" TextWrapping="Wrap" Padding="20,5,0,0" Grid.Column="1" Grid.Row="2" MinWidth="500"/>
+            <Button x:Name="PickFolderButton" Content="Open a folder" Click="PickFolderButton_Click" Margin="20,0,0,10" Grid.Column="2" Grid.Row="2" HorizontalAlignment="Stretch" Background="{StaticResource SystemControlBackgroundAccentBrush}"/>
             
             
-            
-            <TextBlock Text="Application Type" Style="{StaticResource BodyTextBlockStyle}" Grid.Column="0" Grid.Row="1" VerticalAlignment="Center"/>
-            <Button x:Name="excelJson" Click="excelToJson" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Stretch" Background="{StaticResource SystemControlBackgroundAccentBrush}">Load Webapp Checklist</Button>
+            <TextBlock Text="Application Type" Style="{StaticResource BodyTextBlockStyle}" Grid.Column="0" Grid.Row="3" VerticalAlignment="Center"/>
+            <DropDownButton x:Name="excelJson" Content="Application Type" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Stretch" Background="{StaticResource SystemControlBackgroundAccentBrush}">
+                <DropDownButton.Flyout>
+                    <MenuFlyout Placement="Bottom">
+                        <MenuFlyoutItem Text="Web Application" Click="MenuFlyoutItem_Click"/>
+                        <MenuFlyoutItem Text="Mobile Application" Click="MenuFlyoutItem_Click"/>
+                        <MenuFlyoutItem Text="Thick Client" Click="MenuFlyoutItem_Click"/>
+                        <MenuFlyoutItem Text="Cloud" Click="MenuFlyoutItem_Click"/>
+                        <MenuFlyoutItem Text="Infra" Click="MenuFlyoutItem_Click"/>
+                    </MenuFlyout>
+                </DropDownButton.Flyout>
+            </DropDownButton>
             
         </Grid>
         <!--#endregion-->
@@ -59,23 +76,58 @@
               IsVerticalScrollChainingEnabled="False"
               MaxHeight="500" MinHeight="500">
             <ItemsRepeater
-               ItemsSource="{x:Bind checkList}">
-                <DataTemplate x:DataType="l:String">
-                    <Grid Background="{StaticResource SystemControlBackgroundAccentBrush}" Margin="10, 0, 10 10" Width="1500">
-                        <TextBlock Padding="10" Text="{x:Bind}" Style="{StaticResource BodyTextBlockStyle}"
-                   Foreground="{StaticResource SystemControlForegroundAltHighBrush}"
-                   HorizontalAlignment="Left" TextWrapping="Wrap" VerticalAlignment="Center" Grid.Column="0" Grid.Row="0"/>
-                        <RadioButtons x:Name="BackgroundRadioButtons" SelectedIndex="0"  MaxColumns="3" Header="Test Status" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Center">
-                            <x:String>Pass</x:String>
-                            <x:String>Fail</x:String>
-                            <x:String>Not Applicable</x:String>
-                        </RadioButtons>
-                        <TextBox MinWidth="500" Grid.Column="2" Grid.Row="0" PlaceholderText="Enter Comments here" HorizontalAlignment="Right"></TextBox>
-                    </Grid>
-                </DataTemplate>
+               ItemsSource="{x:Bind checksSanitized}"
+                x:Name="checkItemRepeater"
+                VerticalAlignment="Stretch"
+                HorizontalAlignment="Stretch">
+                <ItemsRepeater.Layout>
+                    <StackLayout Orientation="Vertical"/>
+                </ItemsRepeater.Layout>
+                
+                <ItemsRepeater.ItemTemplate>
+                    <DataTemplate x:DataType="l1:Checks">
+
+                        <Grid CornerRadius="8"
+                            Padding="12"
+                            BorderThickness="1"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" Margin="10, 10, 10, 10" Width="1200" ColumnDefinitions="25, Auto, Auto, Auto" RowDefinitions ="Auto, Auto">
+
+                            <CheckBox Checked="CheckBox_Checked"
+                                      Unchecked="CheckBox_Unchecked" Grid.Column="0" DataContext="{x:Bind}"/>
+
+                            <TextBlock Padding="10" Text="{x:Bind testName}" Style="{StaticResource BodyTextBlockStyle}"
+                                    Foreground="{StaticResource TextFillColorPrimaryBrush}"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Stretch"
+                                    HorizontalTextAlignment="Left"
+                                    Width="400"
+                                    Grid.Column="1" Grid.Row="0"/>
+
+
+                            <RadioButtons x:Name="BackgroundRadioButtons" SelectedIndex="0"  MaxColumns="3" Header="Test Status"  Width="400" Grid.Column="2" Grid.Row="0">
+                                <x:String>Pass</x:String>
+                                <x:String>Fail</x:String>
+                                <x:String>Not Applicable</x:String>
+                            </RadioButtons>
+
+                            <TextBox PlaceholderText="Enter Comments here" Width="500" Margin="20,0,0,0" Grid.Column="3" Grid.Row="0"></TextBox>
+
+                            <Button Background="{StaticResource SystemControlBackgroundAccentBrush}" Click="Paste_Click" DataContext="{x:Bind}" Grid.Column="3" Grid.Row="1" HorizontalAlignment="Center">Paste</Button>
+
+                            <Border BorderThickness="1" Grid.Row="1" Grid.ColumnSpan="3" BorderBrush="{ThemeResource ControlStrongStrokeColorDefaultBrush}"  Margin="10,10,10,10" CornerRadius="8">
+                                <TextBlock MinHeight="50" HorizontalTextAlignment="Start" x:Name="FilePathTextBlock" Text="{x:Bind filePath}">No images inserted yet</TextBlock>
+                            </Border>
+                                
+                        </Grid>
+
+                    </DataTemplate>
+                </ItemsRepeater.ItemTemplate>
+            
             </ItemsRepeater>
         </ScrollViewer>
-
-        <StackLayout x:Name="VerticalStackLayout" Orientation="Vertical" Spacing="8"/>
+        
+        
+        <TextBlock x:Name="consoleLog">Test</TextBlock>
     </ListView>
 </Window>
