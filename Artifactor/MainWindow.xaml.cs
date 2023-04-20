@@ -34,14 +34,15 @@ namespace Artifactor
             this.InitializeComponent();
 
             //Set the tilte bar
-            Title = "Artifactor Tool";
+            /*Title = "Artifactor Tool";
             ExtendsContentIntoTitleBar = true;
-            SetTitleBar(TitleBar);
+            SetTitleBar(TitleBar);*/
 
             //Change the default launch size of the window
-            ApplicationView.PreferredLaunchViewSize = new Size(500, 500);
+            ApplicationView.PreferredLaunchViewSize = new Windows.Foundation.Size(500, 500);
             ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
             //checkList.Add(checks[5].testName);
+            
 
         }
 
@@ -157,12 +158,82 @@ namespace Artifactor
                 for (int i = 0; i < checks.Count(); i++)
                 {
                     if (checks[i].testName != null) {
-                        checkList.Add(checks[i].testName);
+                        checksSanitized.Add(checks[i]);
                     }
                     
                 }
             }
 
+        }
+
+        private async void Paste_Click(object sender, RoutedEventArgs e)
+        {
+            
+            Checks checkPaste = (sender as FrameworkElement).DataContext as Checks;
+            
+            if (checkPaste != null)
+            {
+                indexOfCheck = checksSanitized.IndexOf(checkPaste); 
+            }
+
+            var dataPackageView = Clipboard.GetContent();
+            if (dataPackageView != null && dataPackageView.Contains("Bitmap"))
+            {
+                IRandomAccessStreamReference imageReceived = null;
+                imageReceived = await dataPackageView.GetBitmapAsync();
+                if (imageReceived != null)
+                {
+                    using (var imageStream = await imageReceived.OpenReadAsync())
+                    {
+                        /*WriteableBitmap bitmapImage = new WriteableBitmap(500, 500);
+                        await bitmapImage.SetSourceAsync(imageStream);
+
+                        StorageFile outputFile = new StorageFile.GetFileFromPathAsync("C:\\Users\\jsheb\\Downloads");
+
+
+                        FileStream imageFileStream = File.OpenWrite(OutputFolder + "\\" + checks[0].testID + "_001");
+                        BitmapEncoder encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, imageFileStream);*/
+
+                        int fileCount = 1;
+
+
+                        if (checksSanitized[indexOfCheck].filePath != null)
+                            fileCount = checksSanitized[indexOfCheck].filePath.Count + 1;
+
+
+
+
+                        var fileSave = new FileSavePicker();
+                        fileSave.FileTypeChoices.Add("Image", new string[] { ".png" });
+                        fileSave.DefaultFileExtension = ".png";
+                        fileSave.SuggestedFileName = checksSanitized[indexOfCheck].testID + "_" + fileCount.ToString();
+                        fileSave.SuggestedStartLocation = PickerLocationId.DocumentsLibrary;
+
+                        // Retrieve the window handle (HWND) of the current WinUI 3 window. 
+                        var hWnd = WinRT.Interop.WindowNative.GetWindowHandle(this);
+
+                        // Initialize the folder picker with the window handle (HWND).
+                        WinRT.Interop.InitializeWithWindow.Initialize(fileSave, hWnd);
+
+                        var storageFile = await fileSave.PickSaveFileAsync();
+
+                        checksSanitized[indexOfCheck].filePath.Add(storageFile.Path);
+
+                        consoleLog.Text = checksSanitized[indexOfCheck].filePath[0];
+
+                        checksSanitized.GetEnumerator().MoveNext();
+                        //TODO: Create a null exception
+
+                        using (var stream = await storageFile.OpenAsync(FileAccessMode.ReadWrite))
+                        {
+                            await imageStream.AsStreamForRead().CopyToAsync(stream.AsStreamForWrite());
+                        }
+
+                    }
+                }
+            }
+
+            else { Paste_Click(sender, e);}
         }
 
         private async void Paste_Click(object sender, RoutedEventArgs e)

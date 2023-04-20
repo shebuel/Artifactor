@@ -1,0 +1,8 @@
+Title Bar:
+<Grid RowDefinitions="35,*">
+            <StackPanel x:Name="TitleBar" Grid.Row="0" Grid.Column="1" VerticalAlignment="Top" Background="{ThemeResource AppBarItemBackgroundThemeBrush}" Orientation="Horizontal">
+                <Image Source="Assets/scroll-icon-29278.png"></Image>
+                <TextBlock Margin="0,0,8,0" VerticalAlignment="Center" Text="{x:Bind Title}"></TextBlock>
+            </StackPanel>
+        </Grid>
+        <!--#endregion-->

@@ -5,9 +5,8 @@
     x:Class="Artifactor.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:Artifactor"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:l="using:System"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:l="using:System" xmlns:l1="using:Artifactor"
     mc:Ignorable="d">
     
     
@@ -66,15 +65,17 @@
         <!--Start Button-->
         <Button x:Name="startButton" Click="startButton_Click" VerticalAlignment="Bottom" Margin="0,20,0,0" HorizontalAlignment="Center">Start!</Button>
 
-
-
         
+
+
         <!--Item Reapeater-->
 
         <ScrollViewer HorizontalScrollBarVisibility="Auto"
               HorizontalScrollMode="Auto"
               IsVerticalScrollChainingEnabled="False"
               MaxHeight="500" MinHeight="500">
+            
+            
             <ItemsRepeater
                ItemsSource="{x:Bind checksSanitized}"
                 x:Name="checkItemRepeater"

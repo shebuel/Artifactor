@@ -1,0 +1,29 @@
+Feature Request:
+
+Phase 1:
+
+3. Implement Image paste option 
+4. Store the image locally so that it does not take much memory
+5. Mark the check as done if an image is uploaded and let the user choose whether a check is done or not
+6. Convert the check to excel 
+
+Phase 2:
+
+1. Change layout so that all the pages can fit in one window
+2. Save progress so that the user does not start over when they accidentally close the application
+	- When the user presses the close button the application stores data as json
+	- When the user chooses that folder again it reads the json file and show previous progress
+	- Create a save button to manually save progress every few minutes
+
+
+Phase 3:
+
+1. Implement the application as MVVM model?
+2. Use a standard layout
+3.
+
+
+Issues:
+
+- The app hangs for a few seconds when the output folder is selected from the URL in folderpicker.
+- App crashes if image not in clipboard while clicking the paste button
